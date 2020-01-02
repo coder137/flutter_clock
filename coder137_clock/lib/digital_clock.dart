@@ -22,9 +22,10 @@ final _lightTheme = {
 };
 
 final _darkTheme = {
-  _Element.background: Colors.black,
+  _Element.background: Colors.grey,
   _Element.text: Colors.white,
-  _Element.shadow: Color(0xFF174EA6),
+  // _Element.shadow: Color(0xFF174EA6),
+  _Element.shadow: Colors.orange,
 };
 
 /// A basic digital clock.
@@ -103,21 +104,18 @@ class _DigitalClockState extends State<DigitalClock> {
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = DateFormat('ss').format(_dateTime);
+
     final fontSize = MediaQuery.of(context).size.width / 6;
 
+    // ! TODO, Add the nixieOne package without need for internet connection (IMPORTANT)
     final defaultStyle = GoogleFonts.nixieOne(
       fontSize: fontSize,
       fontWeight: FontWeight.w100,
     ).copyWith(color: colors[_Element.text], shadows: [
       Shadow(
-        blurRadius: 1,
+        blurRadius: 5,
         color: colors[_Element.shadow],
-        offset: Offset(1, 0),
-      ),
-      Shadow(
-        blurRadius: 2,
-        color: colors[_Element.shadow],
-        offset: Offset(-1, 0),
+        offset: Offset(0, 0),
       ),
     ]);
 
@@ -128,6 +126,7 @@ class _DigitalClockState extends State<DigitalClock> {
     final sMsb = second.codeUnitAt(0) - 0x30;
     final sLsb = second.codeUnitAt(1) - 0x30;
 
+    // TODO, Have a better container background
     return Container(
       color: colors[_Element.background],
       child: Center(
@@ -165,85 +164,62 @@ class NixieTube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          for (int i = 9; i >= 0; i--) _buildPositioned(context, i.toString()),
-          if (this.position != null)
-            _buildPositioned(
-              context,
-              position.toString(),
-              color: Colors.red[400],
-            ),
-
-          // _buildPositioned(context, "1"),
-          // _buildPositioned(context, "2"),
-          // _buildPositioned(context, "3"),
-          // _buildPositioned(context, "4"),
-          // _buildPositioned(context, "5"),
-          // _buildPositioned(context, "6"),
-          // _buildPositioned(context, "7"),
-          // _buildPositioned(context, "8"),
-          // _buildPositioned(context, "9"),
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        for (int i = 9; i >= 0; i--) _buildPositioned(context, i.toString()),
+        if (this.position != null)
+          _buildPositioned(
+            context,
+            position.toString(),
+            color: Colors.red[500],
+          )
+      ],
     );
   }
 
   Widget _buildPositioned(BuildContext context, String value, {Color color}) {
     assert(value.length == 1);
-    final blurRadius = 3.0;
-    final offset = 2.0;
-    return Center(
-      child: Container(
-        decoration: value != "8"
-            ? null
-            : BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(40.0),
-                  bottom: Radius.circular(10.0),
-                ),
-                border: Border.all(width: 2.0),
-              ),
+    return LayoutBuilder(
+      // TODO, Improve this to have a better border background
+      builder: (context, constraints) => Container(
+        width: constraints.maxWidth,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+            bottom: Radius.circular(25.0),
+          ),
+          border: Border.all(width: 2.0),
+        ),
         child: Padding(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(15.0),
           child: Text(
             value,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: color == null ? null : color,
               fontWeight: color == null ? FontWeight.w100 : null,
-              shadows: color == null
-                  ? null
-                  : [
-                      Shadow(
-                        // color: color.withAlpha(60),
-                        color: color,
-                        blurRadius: blurRadius,
-                        offset: Offset(offset, 0),
-                      ),
-                      Shadow(
-                        // color: color.withAlpha(60),
-                        color: color,
-                        blurRadius: blurRadius,
-                        offset: Offset(-offset, 0),
-                      ),
-                      Shadow(
-                        // color: color.withAlpha(60),
-                        color: color,
-                        blurRadius: blurRadius,
-                        offset: Offset(0, offset),
-                      ),
-                      Shadow(
-                        // color: color.withAlpha(60),
-                        color: color,
-                        blurRadius: blurRadius,
-                        offset: Offset(0, -offset),
-                      ),
-                    ],
+              shadows: color == null ? null : _buildShadowList(color),
             ),
           ),
         ),
       ),
     );
+  }
+
+  List<Shadow> _buildShadowList(Color color) {
+    final blurRadius = 10.0;
+    final offset = 1.0;
+    return [
+      Shadow(
+        color: color,
+        blurRadius: blurRadius,
+        offset: Offset(offset, 0),
+      ),
+      Shadow(
+        color: color,
+        blurRadius: blurRadius,
+        offset: Offset(-offset, 0),
+      ),
+    ];
   }
 }

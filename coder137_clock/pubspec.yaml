@@ -13,8 +13,6 @@ dependencies:
     path: ../flutter_clock_helper
   cupertino_icons: ^0.1.2
 
-  google_fonts: any
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,10 +45,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: NixieOne
+      fonts:
+        - asset: third_party/NixieOne-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

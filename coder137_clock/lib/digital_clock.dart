@@ -6,8 +6,9 @@ import 'dart:async';
 
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+
+// TODO, Make Colors.orange global since it doesnt change
 
 enum _Element {
   background,
@@ -107,17 +108,19 @@ class _DigitalClockState extends State<DigitalClock> {
 
     final fontSize = MediaQuery.of(context).size.width / 6;
 
-    // ! TODO, Add the nixieOne package without need for internet connection (IMPORTANT)
-    final defaultStyle = GoogleFonts.nixieOne(
+    final defaultStyle = TextStyle(
+      color: colors[_Element.text],
+      fontFamily: 'NixieOne',
       fontSize: fontSize,
       fontWeight: FontWeight.w100,
-    ).copyWith(color: colors[_Element.text], shadows: [
-      Shadow(
-        blurRadius: 5,
-        color: colors[_Element.shadow],
-        offset: Offset(0, 0),
-      ),
-    ]);
+      shadows: [
+        Shadow(
+          blurRadius: 5,
+          color: colors[_Element.shadow],
+          offset: Offset(0, 0),
+        ),
+      ],
+    );
 
     final hMsb = hour.codeUnitAt(0) - 0x30;
     final hLsb = hour.codeUnitAt(1) - 0x30;
@@ -125,8 +128,8 @@ class _DigitalClockState extends State<DigitalClock> {
     final mLsb = minute.codeUnitAt(1) - 0x30;
     final sMsb = second.codeUnitAt(0) - 0x30;
     final sLsb = second.codeUnitAt(1) - 0x30;
+    final sizedBoxWidth = const SizedBox(width: 1);
 
-    // TODO, Have a better container background
     return Container(
       color: colors[_Element.background],
       child: Center(
@@ -137,14 +140,19 @@ class _DigitalClockState extends State<DigitalClock> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              sizedBoxWidth,
               Flexible(child: NixieTube(position: hMsb)),
+              sizedBoxWidth,
               Flexible(child: NixieTube(position: hLsb)),
               Text("."),
               Flexible(child: NixieTube(position: mMsb)),
+              sizedBoxWidth,
               Flexible(child: NixieTube(position: mLsb)),
               Text("."),
               Flexible(child: NixieTube(position: sMsb)),
+              sizedBoxWidth,
               Flexible(child: NixieTube(position: sLsb)),
+              sizedBoxWidth,
             ],
           ),
         ),
@@ -164,43 +172,54 @@ class NixieTube extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        for (int i = 9; i >= 0; i--) _buildPositioned(context, i.toString()),
-        if (this.position != null)
-          _buildPositioned(
-            context,
-            position.toString(),
-            color: Colors.red[500],
-          )
+    return Container(
+      decoration: _buildBoxDecoration(),
+      child: Stack(
+        children: <Widget>[
+          for (int i = 9; i >= 0; i--) _buildPositioned(context, i.toString()),
+          if (this.position != null)
+            _buildPositioned(
+              context,
+              position.toString(),
+              color: Colors.red[500],
+            )
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration _buildBoxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      gradient: RadialGradient(
+        radius: 1,
+        colors: <Color>[Colors.orange[400], Colors.yellow[50]],
+      ),
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(25.0),
+        bottom: Radius.circular(25.0),
+      ),
+      border: Border.all(width: 2.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.orange,
+          blurRadius: 10.0,
+          offset: Offset(0, 0),
+        ),
       ],
     );
   }
 
   Widget _buildPositioned(BuildContext context, String value, {Color color}) {
     assert(value.length == 1);
-    return LayoutBuilder(
-      // TODO, Improve this to have a better border background
-      builder: (context, constraints) => Container(
-        width: constraints.maxWidth,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(25.0),
-            bottom: Radius.circular(25.0),
-          ),
-          border: Border.all(width: 2.0),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(15.0),
-          child: Text(
-            value,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: color == null ? null : color,
-              fontWeight: color == null ? FontWeight.w100 : null,
-              shadows: color == null ? null : _buildShadowList(color),
-            ),
-          ),
+    return Padding(
+      padding: EdgeInsets.all(15.0),
+      child: Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: color == null ? null : color,
+          shadows: color == null ? null : _buildShadowList(color),
         ),
       ),
     );

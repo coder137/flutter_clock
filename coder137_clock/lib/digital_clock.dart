@@ -8,7 +8,11 @@ import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// TODO, Make Colors.orange global since it doesnt change
+// Constant class
+abstract class Constants {
+  static const ColorShadow = Colors.orange;
+  static const ColorText = Colors.white;
+}
 
 enum _Element {
   background,
@@ -18,15 +22,15 @@ enum _Element {
 
 final _lightTheme = {
   _Element.background: Color(0xFF81B3FE),
-  _Element.text: Colors.white,
-  _Element.shadow: Colors.orange,
+  _Element.text: Constants.ColorText,
+  _Element.shadow: Constants.ColorShadow,
 };
 
 final _darkTheme = {
   _Element.background: Colors.grey,
-  _Element.text: Colors.white,
+  _Element.text: Constants.ColorText,
   // _Element.shadow: Color(0xFF174EA6),
-  _Element.shadow: Colors.orange,
+  _Element.shadow: Constants.ColorShadow,
 };
 
 /// A basic digital clock.
@@ -164,8 +168,11 @@ class _DigitalClockState extends State<DigitalClock> {
 /// [NixieTube]
 /// Creates a one character NixieTube
 class NixieTube extends StatelessWidget {
-  final int position;
+  static const NixieColorHighlight = Colors.red;
+  static const NixieColorRadialCenter = Colors.orange;
+  static const NixieColorRadialEnd = Colors.yellow;
 
+  final int position;
   NixieTube({
     this.position,
   });
@@ -181,7 +188,7 @@ class NixieTube extends StatelessWidget {
             _buildPositioned(
               context,
               position.toString(),
-              color: Colors.red[500],
+              color: NixieColorHighlight[500],
             )
         ],
       ),
@@ -190,10 +197,12 @@ class NixieTube extends StatelessWidget {
 
   BoxDecoration _buildBoxDecoration() {
     return BoxDecoration(
-      color: Colors.white,
       gradient: RadialGradient(
         radius: 1,
-        colors: <Color>[Colors.orange[400], Colors.yellow[50]],
+        colors: <Color>[
+          NixieColorRadialCenter[400],
+          NixieColorRadialEnd[50],
+        ],
       ),
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(25.0),
@@ -202,7 +211,7 @@ class NixieTube extends StatelessWidget {
       border: Border.all(width: 2.0),
       boxShadow: [
         BoxShadow(
-          color: Colors.orange,
+          color: Constants.ColorShadow,
           blurRadius: 10.0,
           offset: Offset(0, 0),
         ),

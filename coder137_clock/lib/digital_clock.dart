@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 // Constant class
 abstract class Constants {
-  static const ColorShadow = Colors.orange;
+  static const ColorShadow = Colors.grey;
   static const ColorText = Colors.white;
 }
 
@@ -143,8 +143,12 @@ class _DigitalClockState extends State<DigitalClock> {
       fontWeight: FontWeight.w100,
       shadows: [
         Shadow(
-          blurRadius: 5,
           color: colors[_Element.shadow],
+          offset: Offset(1, 0),
+        ),
+        Shadow(
+          color: colors[_Element.shadow],
+          offset: Offset(0, 1),
         ),
       ],
     );
@@ -338,10 +342,25 @@ class _DigitalClockState extends State<DigitalClock> {
 /// [NixieTube]
 /// Creates a one character NixieTube
 class NixieTube extends StatelessWidget {
+  // NOTE, Constant configuration options
   static const NixieColorHighlight = Colors.red;
-  static const NixieColorRadialCenter = Colors.orange;
+  static const NixieColorRadialEnd = Colors.orange;
   static const NixieColorShadow = Colors.orange;
-  static const NixieColorRadialEnd = Colors.yellow;
+  static const NixieColorRadialCenter = Colors.yellow;
+  static const NixieColorBorderShadow = Colors.black54;
+
+  static const NixieRadialGradientRadius = 1.2;
+  static const NixieBorderRadiusTop = 40.0;
+  static const NixieBorderRadiusBottom = 25.0;
+  static const NixieBorderWidth = 2.0;
+  static const NixieShadowBlurWidth = 10.0;
+
+  static const NixieHighlightTextBlurRadius = 10.0;
+  static const NixieHighlightTextOffset = 1.0;
+  static const NixieHighlightTextFontWeight = FontWeight.w300;
+
+  static const NixieShadowOffset = const Offset(5, 5);
+  static const NixiePadding = const EdgeInsets.all(15.0);
 
   final int position;
   NixieTube({
@@ -368,22 +387,28 @@ class NixieTube extends StatelessWidget {
 
   BoxDecoration _buildBoxDecoration() {
     return BoxDecoration(
+      color: Colors.white,
       gradient: RadialGradient(
-        radius: 1,
+        radius: NixieRadialGradientRadius,
         colors: <Color>[
-          NixieColorRadialCenter[400],
-          NixieColorRadialEnd[50],
+          NixieColorRadialCenter[50],
+          NixieColorRadialEnd[100],
+          NixieColorRadialEnd[300],
         ],
       ),
       borderRadius: BorderRadius.vertical(
-        top: Radius.circular(40.0),
-        bottom: Radius.circular(25.0),
+        top: Radius.circular(NixieBorderRadiusTop),
+        bottom: Radius.circular(NixieBorderRadiusBottom),
       ),
-      border: Border.all(width: 2.0),
+      border: Border.all(width: NixieBorderWidth),
       boxShadow: [
         BoxShadow(
           color: NixieColorShadow,
-          blurRadius: 50.0,
+          blurRadius: NixieShadowBlurWidth,
+        ),
+        BoxShadow(
+          color: NixieColorBorderShadow,
+          offset: NixieShadowOffset,
         ),
       ],
     );
@@ -392,12 +417,13 @@ class NixieTube extends StatelessWidget {
   Widget _buildPositioned(BuildContext context, String value, {Color color}) {
     assert(value.length == 1);
     return Padding(
-      padding: EdgeInsets.all(15.0),
+      padding: NixiePadding,
       child: Text(
         value,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: color == null ? null : color,
+          fontWeight: color == null ? null : NixieHighlightTextFontWeight,
           shadows: color == null ? null : _buildShadowList(color),
         ),
       ),
@@ -405,18 +431,16 @@ class NixieTube extends StatelessWidget {
   }
 
   List<Shadow> _buildShadowList(Color color) {
-    final blurRadius = 10.0;
-    final offset = 1.0;
     return [
       Shadow(
         color: color,
-        blurRadius: blurRadius,
-        offset: Offset(offset, 0),
+        blurRadius: NixieHighlightTextBlurRadius,
+        offset: Offset(NixieHighlightTextOffset, 0),
       ),
       Shadow(
         color: color,
-        blurRadius: blurRadius,
-        offset: Offset(-offset, 0),
+        blurRadius: NixieHighlightTextBlurRadius,
+        offset: Offset(0, NixieHighlightTextOffset),
       ),
     ];
   }

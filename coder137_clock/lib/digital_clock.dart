@@ -40,7 +40,6 @@ final _lightTheme = {
 final _darkTheme = {
   _Element.background: Colors.grey,
   _Element.text: Constants.ColorText,
-  // _Element.shadow: Color(0xFF174EA6),
   _Element.shadow: Constants.ColorShadow,
 };
 
@@ -93,14 +92,6 @@ class _DigitalClockState extends State<DigitalClock> {
   void _updateTime() {
     setState(() {
       _dateTime = DateTime.now();
-      // * Update once per minute. If you want to update every second, use the
-      // following code.
-      // _timer = Timer(
-      //   Duration(minutes: 1) -
-      //       Duration(seconds: _dateTime.second) -
-      //       Duration(milliseconds: _dateTime.millisecond),
-      //   _updateTime,
-      // );
       // * Update once per second, but make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
